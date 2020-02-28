@@ -93,7 +93,7 @@ module OAuth2
     # @yield [req] The Faraday request
     def request(verb, url, opts = {}) # rubocop:disable CyclomaticComplexity, MethodLength, Metrics/AbcSize
       # FIXME: fix this to work when not in rails
-      Rails.logger.info %Q{OAUTH2.request( #{verb.inspect}, #{url.inspect}, opts )}
+      Rails.logger.info %Q{OAUTH2.request( #{verb.inspect}, #{url.inspect}, opts ) - enter}
       if ENV['OAUTH_DEBUG'] == 'true'
         connection.response :logger, ::Logger.new($stdout)
       end
@@ -105,6 +105,7 @@ module OAuth2
         yield(req) if block_given?
       end
       response = Response.new(response, :parse => opts[:parse])
+      Rails.logger.info %Q{OAUTH2.request: response.status: #{response.status.inspect} }
 
       case response.status
       when 301, 302, 303, 307
@@ -137,6 +138,7 @@ module OAuth2
     # @param [Class] class of access token for easier subclassing OAuth2::AccessToken
     # @return [AccessToken] the initialized AccessToken
     def get_token(params, access_token_opts = {}, access_token_class = AccessToken) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      Rails.logger.info %Q{OAUTH2.get_token: enter}
       params = Authenticator.new(id, secret, options[:auth_scheme]).apply(params)
       opts = {:raise_errors => options[:raise_errors], :parse => params.delete(:parse)}
       headers = params.delete(:headers) || {}
@@ -153,7 +155,9 @@ module OAuth2
         error = Error.new(response)
         raise(error)
       end
-      access_token_class.from_hash(self, response.parsed.merge(access_token_opts))
+      token = access_token_class.from_hash(self, response.parsed.merge(access_token_opts))
+      Rails.logger.info %Q{OAUTH2.get_token: token built}
+      return token
     end
 
     # The Authorization Code strategy
