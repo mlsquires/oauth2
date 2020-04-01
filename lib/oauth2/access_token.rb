@@ -80,6 +80,7 @@ module OAuth2
     # @return [AccessToken] a new AccessToken
     # @note options should be carried over to the new AccessToken
     def refresh!(params = {})
+      Rails.logger.info %Q{#{self.class.name}.refresh!( #{params.inspect} )}
       raise('A refresh_token is not available') unless refresh_token
       params[:grant_type] = 'refresh_token'
       params[:refresh_token] = refresh_token

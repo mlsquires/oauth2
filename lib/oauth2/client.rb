@@ -93,7 +93,7 @@ module OAuth2
     # @yield [req] The Faraday request
     def request(verb, url, opts = {}) # rubocop:disable CyclomaticComplexity, MethodLength, Metrics/AbcSize
       # FIXME: fix this to work when not in rails
-      Rails.logger.info %Q{OAUTH2.request( #{verb.inspect}, #{url.inspect}, opts ) - enter}
+      Rails.logger.info %Q{OAUTH2.request( #{verb.inspect}, #{url.inspect}, #{opts.inspect} ) - enter}
       # if ENV['OAUTH_DEBUG'] == 'true'
       #   connection.response :logger, ::Logger.new($stdout)
       # end
