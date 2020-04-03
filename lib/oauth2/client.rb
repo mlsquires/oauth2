@@ -69,7 +69,9 @@ module OAuth2
     # @param [Hash] params additional query parameters
     def authorize_url(params = {})
       params = (params || {}).merge(redirection_params)
-      connection.build_url(options[:authorize_url], params).to_s
+      result = connection.build_url(options[:authorize_url], params).to_s
+      Rails.logger.info %Q{OAUTH2.authorize_url: result: #{result.inspect}}
+      result
     end
 
     # The token endpoint URL of the OAuth2 provider
